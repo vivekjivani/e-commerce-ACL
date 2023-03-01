@@ -1,5 +1,7 @@
-"use strict"
+const bcrypt = require("bcrypt")
 const { Model } = require("sequelize")
+const jwt = require("jsonwebtoken")
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -64,19 +66,6 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      permissions: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "read",
-        validate: {
-          notNull: { msg: "User Must Have a Permissions" },
-          notEmpty: { msg: "User Permissions Can not Be Empty" },
-          isIn: {
-            args: [["read", "write", "delete", "update"]],
-            msg: "User Permissions Must Be Read, Write, or Delete",
-          },
-        },
-      },
     },
     {
       sequelize,
@@ -84,5 +73,17 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "users",
     }
   )
+
+  User.addHook("beforeCreate", (user) => {
+    user.password = bcrypt.hashSync(user.password, 10)
+  })
+
+  User.prototype.matchPassword = async function (password) {
+    return await bcrypt.compare(password, this.password)
+  }
+
+  User.prototype.generateToken = function () {
+    return jwt.sign({ id: this.id }, process.env.JWT_SECRET)
+  }
   return User
 }

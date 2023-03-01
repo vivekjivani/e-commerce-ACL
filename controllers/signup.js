@@ -19,7 +19,20 @@ module.exports.signup = asyncHandler(async function (req, res, next) {
     return next(new ErrorResponse(errorMessage, 400))
   }
 
+  const userInDB = await User.findOne({
+    where: { userName: req.body.userName },
+  })
+
+  if (userInDB) {
+    return next(new ErrorResponse("User already exists", 400))
+  }
+
+  const user = await User.create(req.body)
+
+  let token = user.generateToken()
+
   res.status(200).json({
     success: true,
+    token,
   })
 })

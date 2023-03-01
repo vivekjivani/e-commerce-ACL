@@ -10,7 +10,8 @@ dotenv.config({ path: "./config/config.env" })
 
 // Load Routers
 const productRouter = require("./routes/products")
-const signUp = require("./routes/signup")
+const signUpRouter = require("./routes/signup")
+const loginRouter = require("./routes/login")
 
 const app = express()
 
@@ -24,7 +25,8 @@ app.use(express.json())
 
 // Load Routes
 app.use("/products", productRouter)
-app.use("/signup", signUp)
+app.use("/signup", signUpRouter)
+app.use("/login", loginRouter)
 
 // Error Handler Middleware
 app.use(errorHandler)
