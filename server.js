@@ -3,6 +3,7 @@ const express = require("express")
 const dotenv = require("dotenv")
 const requestLogger = require("morgan")
 const errorHandler = require("./middleware/error")
+const { sequelize } = require("./models")
 
 // load Env Vars
 dotenv.config({ path: "./config/config.env" })
@@ -30,6 +31,9 @@ const PORT = process.env.PORT || 5000
 
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`.green)
+  sequelize.sync().then(() => {
+    console.log("Database Connected".green.inverse)
+  })
 })
 
 process.on("uncaughtException", (error) => {
