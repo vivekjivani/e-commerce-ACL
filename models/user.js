@@ -64,6 +64,19 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      permissions: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "read",
+        validate: {
+          notNull: { msg: "User Must Have a Permissions" },
+          notEmpty: { msg: "User Permissions Can not Be Empty" },
+          isIn: {
+            args: [["read", "write", "delete", "update"]],
+            msg: "User Permissions Must Be Read, Write, or Delete",
+          },
+        },
+      },
     },
     {
       sequelize,

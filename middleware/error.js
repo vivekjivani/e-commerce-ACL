@@ -3,6 +3,9 @@ const errorHandler = (err, req, res, next) => {
 
   error.message = err.message
 
+  // Log Error
+  console.log(error)
+
   // Handle Validation Errors
 
   res.status(error.statusCode || 500).json({
